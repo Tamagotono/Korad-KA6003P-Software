@@ -64,7 +64,10 @@ def Get_I_Set():
                        timeout=1)
     PS.flushInput()
     PS.write(REQUEST_SET_CURRENT)  # Request the target current
-    I_set = float(PS.read(5))
+    I_set = PS.read(5)
+    if (I_set == b''):
+        I_set = b'0'
+    I_set = float(I_set)
     print(str('Current is set to ')+str(I_set))
     PS.flushInput()
     return(I_set)
@@ -116,12 +119,14 @@ def SetVoltage(Voltage):
     print(Output_string)
     PS.flushInput()
     time.sleep(0.2)
-    VeriVolt = Get_V_Set()  # Verify PS accepted the setting
-    print(VeriVolt)
-    if (VeriVolt != Voltage):
+    VeriVolt = "{:2.2f}".format(float(Get_V_Set()))  # Verify PS accepted
+        # the setting
+#    print(VeriVolt)
+#    print(Voltage)
+    while (VeriVolt != Voltage):
         PS.write(Output_string)  # Try one more time
     vEntry.delete(0, 5)
-    vEntry.insert(0, VeriVolt)
+    vEntry.insert(0, "{:2.2f}".format(float(VeriVolt)))
     return(Output_string)
 
 
@@ -133,10 +138,19 @@ def SetCurrent(Current):
                        stopbits=1,
                        timeout=1)
     PS.flushInput()
+    if (float(Current) > float(IMAX)):
+        Current = IMAX
+    Current = "{:2.3f}".format(float(Current))
     Output_string = SET_CURRENT + bytes(Current, "utf-8")
     PS.write(Output_string)
     print(Output_string)
     PS.flushInput()
+    time.sleep(0.2)
+    VeriAmp = "{:2.3f}".format(float(Get_I_Set()))
+    if (VeriAmp != Current):
+        VeriAmp = 0.00
+    iEntry.delete(0, 5)
+    iEntry.insert(0, "{:2.3f}".format(float(VeriAmp)))
     return(Output_string)
 
 
@@ -151,6 +165,9 @@ def V_Actual():
     PS.write(REQUEST_ACTUAL_VOLTAGE)  # Request the actual voltage
     time.sleep(0.015)
     V_actual = PS.read(5)
+    if (V_actual == b''):
+            V_actual = b'0'  # deal with the occasional NULL from PS
+#    print('V_actual = ' + str(V_actual))
     V_actual = float(V_actual)
     PS.flushInput()
     return(V_actual)
@@ -166,7 +183,10 @@ def I_Actual():
     PS.flushInput()
     PS.write(REQUEST_ACTUAL_CURRENT)  # Request the actual current
     time.sleep(0.015)
-    I_actual = float(PS.read(5))
+    I_actual = PS.read(5)
+    if (I_actual == b''):
+            I_actual = b'0'  # deal with the occasional NULL from PS
+    I_actual = float(I_actual)
     PS.flushInput()
     return(I_actual)
 
@@ -237,9 +257,18 @@ def Application_Loop():
 
 def SetVA():
     Volts = vEntry.get()
-    Amps = iEntry.get()
     SetVoltage(Volts)
+
+    Amps = iEntry.get()
+    if (Amps == ''):
+        Amps = b'0'
+        print('changed Amps to 0')
+    Amps = "{0:.3f}".format(float(Amps))
     SetCurrent(Amps)
+
+
+def MemSet(MemNum):
+    print(MemNum)
 
 
 #==============================================================================
@@ -257,7 +286,7 @@ IMAX = '3.1'
 # Create Window
 #==============================================================================
 app = Tk()
-app.geometry("640x480+1200+1200")
+app.geometry("400x280+1200+1200")
 app.title('TK Experiment')
 
 # Actual Readout area
@@ -315,6 +344,12 @@ Set_Button = Button(app)
 Set_Button.configure(text='Set V & I')
 Set_Button.grid(row=4, column=2, sticky='N')
 Set_Button.configure(command=lambda: SetVA())
+
+
+#Mem1_Button = Button(app)
+#Mem1_Button.configure(text='M1: ')
+#Mem1_Button.grid(row=10, column=0, sticky='W')
+#Mem1_Button.configure(command=lambda: MemSet(1))
 
 
 #==============================================================================
