@@ -216,8 +216,8 @@ def SetOVP(OnOff):
                        stopbits=1,
                        timeout=1)
     PS.flushInput()
-    Output_string = SET_OVP + str(OnOff)
-    PS.write(bytes(Output_string, "utf-8"))
+    Output_string = SET_OVP + OnOff
+    PS.write(Output_string)
     print(Output_string)
     PS.flushInput()
     return(Output_string)
@@ -231,8 +231,8 @@ def SetOCP(OnOff):
                        stopbits=1,
                        timeout=1)
     PS.flushInput()
-    Output_string = SET_OCP + str(OnOff)
-    PS.write(bytes(Output_string, "utf-8"))
+    Output_string = SET_OCP + OnOff
+    PS.write(Output_string)
     print(Output_string)
     PS.flushInput()
     return(Output_string)
@@ -346,10 +346,28 @@ Set_Button.grid(row=4, column=2, sticky='N')
 Set_Button.configure(command=lambda: SetVA())
 
 
-#Mem1_Button = Button(app)
-#Mem1_Button.configure(text='M1: ')
-#Mem1_Button.grid(row=10, column=0, sticky='W')
-#Mem1_Button.configure(command=lambda: MemSet(1))
+OVP_Button = Button(app)
+OVP_Button.configure(text='OVP ON')
+OVP_Button.grid(row=5, column=0, sticky='W')
+OVP_Button.configure(command=lambda: SetOVP(b'1'))
+
+
+OVP_Button = Button(app)
+OVP_Button.configure(text='OVP OFF')
+OVP_Button.grid(row=6, column=0, sticky='W')
+OVP_Button.configure(command=lambda: SetOVP(b'0'))
+
+
+OCP_Button = Button(app)
+OCP_Button.configure(text='OCP ON')
+OCP_Button.grid(row=7, column=0, sticky='W')
+OCP_Button.configure(command=lambda: SetOCP(b'1'))
+
+
+OCP_Button = Button(app)
+OCP_Button.configure(text='OCP OFF')
+OCP_Button.grid(row=8, column=0, sticky='W')
+OCP_Button.configure(command=lambda: SetOCP(b'0'))
 
 
 #==============================================================================

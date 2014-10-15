@@ -14,12 +14,6 @@ Since this is a learning project for me, I will likely do a complete re-write la
 
 
 TODO:
-Replicate front panel controls:
- - Set Current
- - Output on/off
- - OVP
- - OCP
-
 Programable change over time (i.e. 0 - 30V in 0.01V steps over 3 hrs)
 
 Logging:
@@ -30,11 +24,14 @@ Logging:
 
 DONE:
 Replicate front panel controls:
+ - OVP
+ - OCP
  - Set Voltage
+ - Set Current
  - Output on/off
 
 Display actual voltage and current
 Display set voltage and current
 
 
-Last updated: 13 Oct, 2014
+Last updated: 15 Oct, 2014
